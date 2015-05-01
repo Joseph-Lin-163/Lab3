@@ -5,7 +5,7 @@
 // 
 // Create Date:    10:39:18 04/29/2015 
 // Design Name: 
-// Module Name:    masterCLK 
+// Module Name:    timer 
 // Project Name: 
 // Target Devices: 
 // Tool versions: 
@@ -181,7 +181,7 @@ module timer (
                                     begin
                                     minT <= minT + 1
                                     end
-                                end
+                                
 
 
                                 end   
@@ -189,7 +189,7 @@ module timer (
                                 begin
                                 minO <= minO + 1
                                 end
-                            end
+                            
 
 
                         end
@@ -197,15 +197,14 @@ module timer (
                         begin
                         secT <= secT + 1
                         end
-                    end
+                    
 
 
                     end
                 else
                     begin
                     sec0 <= sec0 + 1
-                    end
-                end
+                    end    
             end
         else if (SEL == 0) // At this point, ADJ != 0, therefore ADJ == 1
             begin
@@ -215,7 +214,6 @@ module timer (
             begin 
 
             end
-        end
     end
 
 endmodule
