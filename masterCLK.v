@@ -19,7 +19,21 @@
 //
 //////////////////////////////////////////////////////////////////////////////////
 module masterCLK(
+
+    /*
+        Need input for the ADJ, SEL, and RESET
+        I believe the ADJ and SEL are synchronous while RESET is asynchronous?
+        Correct me if I'm wrong -JL
+
+        Any other inputs?
+    */
+
+    input SEL,
+    input ADJ,
+    input RESET,
     input clk,
+
+
     output reg clock2Hz, 
     output reg clock1Hz,
     output reg clockFast, // 500 Hz
