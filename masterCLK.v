@@ -26,6 +26,26 @@ module masterCLK(
     output reg clockBlink
     );
 
+    /*
+        Just a quick thought - we don't have something specific for the
+        min and sec display. We have an output reg for clock2Hz, clock1Hz, at lines 24-27
+        but how many bits are those regs? What does it look like in the endgame?
+
+        My thought: output is the display on the 4 7-segment display
+        output regs on those? Y/N? -JL
+    */
+
+    // Format:   7-seg display =>    | minT | minO | secT | secO |
+    // T = tens, O = ones
+    // minO and secO max is 9 [4 bits]
+    // minT and secT max is 6 [3 bits]
+    
+    reg [3:0] sec0;
+    reg [2:0] secT;
+    reg [3:0] min0;
+    reg [2:0] minT;
+
+
     reg [26:0] counter = 0;
     clock2Hz = 0; // needs to be in an always block, suggestion put in a rst signal for initialization
     clock1Hz = 0;
