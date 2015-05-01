@@ -22,19 +22,54 @@
 /*
 ****************************************************************************************
 
-This module will be for altering the digits on the 7-seg display
-Not the actual display, but the numbers in each slot
+	This module will be for altering the digits on the 7-seg display
+	Not the actual display, but the numbers in each slot
 
-Requires:
-clockManager to feed the input of a clk (1 Hz, 2 Hz, etc.)
+	Requires:
+	masterCLK to feed the input of a clk (1 Hz, 2 Hz, etc.)
 
-Feeds into:
-segDisp.v to give it the numbers so that we have information to change the
-    lights on the 7-seg display
+	Feeds into:
+	segDisp.v to give it the numbers so that we have information to change the
+    	lights on the 7-seg display
+
+
+	This link may help in doing inter-module work:
+		http://stackoverflow.com/questions/1704989/wiring-two-modules-in-verilog
+
+		Transcript (DELETE LATER):
+
+								 module dff (
+								    input Clk,
+								    input D,
+								    output Q,
+								    output Qbar
+								  );
+
+								  wire q_to_s;
+								  wire qbar_to_r;
+								  wire clk_bar;
+
+								  assign clk_bar = ~Clk;
+
+								  D_latch dlatch (
+								    .D(D),
+								    .Clk(Clk),
+								    .Q(q_to_s),
+								    .Qbar(qbar_to_r)
+								  );
+
+								  RS_latch rslatch (
+								    .S(q_to_s),
+								    .R(qbar_to_r),
+								    .Clk(clk_bar),
+								    .Qa(Q),
+								    .Qb(Qbar)
+								  );
+
+								 endmodule
 
 ****************************************************************************************
 */
-
 
 module timer (
 	
