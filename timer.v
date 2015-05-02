@@ -76,7 +76,7 @@ module timer (
     input SEL,
     input ADJ,
     input RESET,
-    input clk,
+    input clk
 
 
 );
@@ -192,13 +192,12 @@ module timer (
                         end
                     else
                         begin
-                        secT <= secT + 1
+                        secT <= secT + 1;
                         end
-
-                   	end
+						end
                 else
                     begin
-                    sec0 <= sec0 + 1
+                    sec0 <= sec0 + 1;
                     end    
             end
         else if (SEL == 0) // At this point, ADJ != 0, therefore ADJ == 1

@@ -21,7 +21,7 @@
 module tb(
     );
 
-    reg clk;
+    reg clk, rst;
     wire clock1Hz;
     wire clock2Hz;
     wire clockFast;
@@ -29,6 +29,8 @@ module tb(
     
     masterCLK myCLK (
         .clk (clk),
+		  .rst (rst),
+		  
         .clock1Hz (clock1Hz),
         .clock2Hz (clock2Hz),
         .clockFast (clockFast),
@@ -37,12 +39,14 @@ module tb(
         
     initial begin
         clk = 1'b0;
+		  rst = 1'b1;
         repeat(4) #1 clk = ~clk;
+		  rst = 1'b0;
         forever #1 clk = ~clk;
     end
     
     initial begin
-        #100
+        #100000000
     $finish;
     end
 endmodule

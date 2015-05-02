@@ -27,10 +27,11 @@ module masterCLK(
     output reg clock2Hz, 
     output reg clock1Hz,
     output reg clockFast, // 500 Hz
-    output reg clockBlink
+    output reg clockBlink //   3 Hz
     );
 
-    reg [26:0] counter = 0;
+    reg [26:0] counter;
+	 reg [26:0] fastCounter;
     // 100 Mhz = 100 000 000, 27 bits needed
     // 100 000 000 Hz
     
@@ -38,10 +39,14 @@ module masterCLK(
     begin
         if (rst)
             begin
+				
                 clock2Hz = 0; 
                 clock1Hz = 0;
                 clockFast = 0;
                 clockBlink = 0;
+					 
+					 counter = 0;
+					 fastCounter = 0;
             end
         else
             begin
@@ -50,27 +55,25 @@ module masterCLK(
                     clock1Hz <= ~clock1Hz;
                     counter = 'd0;
                 end
-
-                // only counting at this first 50 000 000, 
-                // and nothing more, need to count at this interval not just this number
-                // dont' use mod % though, really slow for synthesis
-                if (counter == 'd50000000)                 
+                if (counter == 'd50000000 || counter == 'd100000000)                 
                 begin
                     clock2Hz <= ~clock2Hz;
                 end
 
-                if (counter == 'd200000)
+                if (fastCounter == 'd200000)
                 begin
                     clockFast <= ~clockFast;
+						  fastCounter <= 'd0;
                 end
 
-                // If we say 1 second per 100 MHz, this is .33 seconds
-                if ((counter == 'd33 333 333) || (counter == 'd66666666) || (counter == 'd99999999)) 
+                // If we say 1 second per 100 MHz, this is .33 seconds for 3 ticks a sec
+                if ((counter == 'd33333333) || (counter == 'd66666666) || (counter == 'd99999999)) 
                 begin
                     clockBlink <= ~clockBlink;
                 end
 
-                counter <= counter + 1;
+                counter = counter + 'd1;
+					 fastCounter = fastCounter + 'd1;
 
                 
                 /*
@@ -88,7 +91,6 @@ module masterCLK(
 
 
             end     // end else block
-        end         // end if (rst) else block
     end             // end always block 
     
 endmodule
