@@ -46,8 +46,9 @@ module masterToTimer (
 	begin
 		if (RESET)
 			begin
-				clock2HzPrev = 1'b0;
-    			clock1HzPrev = 1'b0;
+				clkOut <= 1'b0;
+				clock2HzPrev <= 1'b0;
+    		clock1HzPrev <= 1'b0;
 			end
 		else
 			begin
