@@ -163,23 +163,22 @@ module timer (
                     begin
                     secO <= 4'b0000;
 
-
                     if (secT == 3'b101)
                         begin
-                        secT <= 3'b000
+                        secT <= 3'b000;
 
                             if (minO == 4'b1001)
                                 begin
-                                minO <= 4'b0000
+                                minO <= 4'b0000;
 
 
                                 if (minT == 3'b101)
                                     begin
-                                    minT = 0
+                                    minT = 0;
                                     end
                                 else
                                     begin
-                                    minT <= minT + 1
+                                    minT <= minT + 1;
                                     end
                                 
 
@@ -187,20 +186,16 @@ module timer (
                                 end   
                             else
                                 begin
-                                minO <= minO + 1
-                                end
-                            
-
+                                minO <= minO + 1;
+                                end                            
 
                         end
                     else
                         begin
                         secT <= secT + 1
                         end
-                    
 
-
-                    end
+                   	end
                 else
                     begin
                     sec0 <= sec0 + 1
@@ -208,11 +203,46 @@ module timer (
             end
         else if (SEL == 0) // At this point, ADJ != 0, therefore ADJ == 1
             begin
+            	if (sec0 == 4'b1001)
+                    begin
+                    secO <= 4'b0000;
 
+                    if (secT == 3'b101)
+                        begin
+                        secT <= 3'b000;
+                        end
+                    else
+                        begin
+                        secT <= secT + 1;
+                        end                    
+
+                    end
+                else
+                    begin
+                    sec0 <= sec0 + 1;
+                    end    
             end
         else               // At this point, ADJ == 1, SEL != 0, therefore SEL == 1
             begin 
+            	if (minO == 4'b1001)
+                    begin
+                    minO <= 4'b0000;
 
+
+                    if (minT == 3'b101)
+                    	begin
+                        minT = 0;
+                        end
+                    else
+                        begin
+                        minT <= minT + 1;
+                        end
+                                
+                    end   
+				else
+					begin
+                    minO <= minO + 1;
+                    end             
             end
     end
 
