@@ -154,12 +154,12 @@ module timer (
                 NOTICE: See the ADJ equal 0.png file for clarity on the code
                 Red = block for incrementing secO
                 Blue = block for incrementing secT
-                Green = block for incrementing min0
+                Green = block for incrementing minO
                 Purple = block for incrementing minT
             */
 
             begin
-                if (sec0 == 4'b1001)
+                if (secO == 4'b1001)
                     begin
                     secO <= 4'b0000;
 
@@ -197,12 +197,12 @@ module timer (
 						end
                 else
                     begin
-                    sec0 <= sec0 + 1;
+                    secO <= secO + 1;
                     end    
             end
         else if (SEL == 0) // At this point, ADJ != 0, therefore ADJ == 1
             begin
-            	if (sec0 == 4'b1001)
+            	if (secO == 4'b1001)
                     begin
                     secO <= 4'b0000;
 
@@ -218,7 +218,7 @@ module timer (
                     end
                 else
                     begin
-                    sec0 <= sec0 + 1;
+                    secO <= secO + 1;
                     end    
             end
         else               // At this point, ADJ == 1, SEL != 0, therefore SEL == 1
