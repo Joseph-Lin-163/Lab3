@@ -16,6 +16,4 @@ implement scanning and blinking (I do not know how to do this yet)
 
 implement the pause function (I do not know how to do this yet)
 
-implement the SEL cases in timer, shouldn't be hard
-
 figure out how the pins work in relation to UCF
