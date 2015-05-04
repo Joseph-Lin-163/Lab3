@@ -78,6 +78,10 @@ module timer (
     input RESET,
     input clk
 
+    output reg sec0;
+    output reg secT;
+    output reg min0;
+    output reg minT;
 
 );
 
@@ -246,3 +250,16 @@ module timer (
     end
 
 endmodule
+
+segDisp segDisp_sO (
+    in(secO)
+);
+segDisp segDisp_sT (
+    in(secT)
+);
+segDisp segDisp_mO (
+    in(minO)
+);
+segDisp segDisp_mT (
+    in(minT)
+);
