@@ -25,6 +25,7 @@ module segDisp (
 );
 
     reg [6:0] out = 7'b0000000;
+
 // A = top, B = top-right, ... , F = top left, G = middle
 always @*
 	begin 

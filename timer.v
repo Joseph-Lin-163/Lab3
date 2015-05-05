@@ -245,5 +245,3 @@ segDisp segDisp_mT (
 );
 
 endmodule
-
-
