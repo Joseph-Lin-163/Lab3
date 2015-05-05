@@ -28,11 +28,14 @@ module tb(
     wire clockBlink;
 	 
 	 reg ADJ, SEL, RESET;
-	 wire clkOut;
+	 //wire clkOut;
     
     masterCLK myCLK (
         .clk (clk),
-		  .rst (rst),
+		 .rst (rst),
+         .ADJ (ADJ),
+         .SEL (SEL),
+         .RESET (RESET),
 		  
         .clock1Hz (clock1Hz),
         .clock2Hz (clock2Hz),
@@ -40,22 +43,11 @@ module tb(
         .clockBlink (clockBlink)
         );
         
-	 masterToTimer mtt (
-			.ADJ (ADJ),
-			.SEL (SEL),
-			.RESET (RESET),
-			.clk (clk),
-			.clock2Hz (clock2Hz),
-			.clock1Hz (clock1Hz),
-			//input clockFast,
-			//input clockBlink,
-
-			.clkOut (clkOut)
-			);
 			
     initial begin
         clk = 1'b0;
 		  rst = 1'b1;
+		  RESET = 1'b1;
         repeat(4) #1 clk = ~clk;
 		  rst = 1'b0;
         forever #1 clk = ~clk;
@@ -63,9 +55,11 @@ module tb(
     
     initial begin
 			ADJ = 0;
-			SEL = 1; 
+			SEL = 1;
+		  #100
+		  RESET = 1'b0;
         #5000000
-		   ADJ = 1;
+		   ADJ = 0;
 		  #500000000
 		   ADJ = 0;
         #100000000

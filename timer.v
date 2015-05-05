@@ -21,43 +21,32 @@
 
 /*
 ****************************************************************************************
-
 	This module will be for altering the digits on the 7-seg display
 	Not the actual display, but the numbers in each slot
-
 	Requires:
 	masterCLK to feed the input of a clk (1 Hz, 2 Hz, etc.)
-
 	Feeds into:
 	segDisp.v to give it the numbers so that we have information to change the
     	lights on the 7-seg display
-
-
 	This link may help in doing inter-module work:
 		http://stackoverflow.com/questions/1704989/wiring-two-modules-in-verilog
-
 		Transcript (DELETE LATER):
-
 								 module dff (
 								    input Clk,
 								    input D,
 								    output Q,
 								    output Qbar
 								  );
-
 								  wire q_to_s;
 								  wire qbar_to_r;
 								  wire clk_bar;
-
 								  assign clk_bar = ~Clk;
-
 								  D_latch dlatch (
 								    .D(D),
 								    .Clk(Clk),
 								    .Q(q_to_s),
 								    .Qbar(qbar_to_r)
 								  );
-
 								  RS_latch rslatch (
 								    .S(q_to_s),
 								    .R(qbar_to_r),
@@ -65,9 +54,7 @@
 								    .Qa(Q),
 								    .Qb(Qbar)
 								  );
-
 								 endmodule
-
 ****************************************************************************************
 */
 
@@ -76,8 +63,13 @@ module timer (
     input SEL,
     input ADJ,
     input RESET,
-    input clk
+    input clk,
 
+    output [3:0] secO,
+    output [3:0] secT,
+    output [3:0] minO,
+    output [3:0] minT,
+    output [6:0] out
 
 );
 
@@ -86,26 +78,17 @@ module timer (
     // minO and secO max is 9 [4 bits]
     // minT and secT max is 6 [3 bits]
     
-    reg [3:0] secO;
-    reg [2:0] secT;
-    reg [3:0] minO;
-    reg [2:0] minT;
-
 /* 
         Strategy:
         Certain behaviors depending on input (ADJ,SEL,RESET)
-
         The always @ (posedge clk) acts as a while loop
         As long as the positive edge of the clock == 1
             Do the following code block
-
         Cases: 
         1. ADJ = 0, SEL = Dont care
             Seconds increase by 1 Hz            
                     TODO: 
-
                         increase secO:
-
                             if sec0 == 9 (1001) 
                                 set secO to 0
                                 //increase secT:
@@ -132,20 +115,22 @@ module timer (
         3. ADJ = 1, SEL = 1
             Min increase by 2 Hz
             Reset after 59
-
         Collorary: Max time is 59:59
     */
 
-
+                reg [3:0] secO = 4'b0000;
+                reg [3:0] secT = 4'b0000;
+                reg [3:0] minO = 4'b0000;
+                reg [3:0] minT = 4'b0000;
     always @(posedge clk)
     begin
 
       	if (RESET) 
             begin
-                secO <= 4'b0000;
-                secT <= 3'b000;
-                minO <= 4'b0000;
-                minT <= 3'b000;
+                secO = 4'b0000;
+                secT = 4'b0000;
+                minO = 4'b0000;
+                minT = 4'b0000;
 
             end
         else if (ADJ == 0) 
@@ -163,18 +148,18 @@ module timer (
                     begin
                     secO <= 4'b0000;
 
-                    if (secT == 3'b101)
+                    if (secT == 4'b0101)
                         begin
-                        secT <= 3'b000;
+                        secT <= 4'b0000;
 
                             if (minO == 4'b1001)
                                 begin
                                 minO <= 4'b0000;
 
 
-                                if (minT == 3'b101)
+                                if (minT == 4'b0101)
                                     begin
-                                    minT = 0;
+                                    minT = 4'b0000;
                                     end
                                 else
                                     begin
@@ -206,9 +191,9 @@ module timer (
                     begin
                     secO <= 4'b0000;
 
-                    if (secT == 3'b101)
+                    if (secT == 4'b0101)
                         begin
-                        secT <= 3'b000;
+                        secT <= 4'b0000;
                         end
                     else
                         begin
@@ -228,7 +213,7 @@ module timer (
                     minO <= 4'b0000;
 
 
-                    if (minT == 3'b101)
+                    if (minT == 4'b0101)
                     	begin
                         minT = 0;
                         end
@@ -244,5 +229,21 @@ module timer (
                     end             
             end
     end
+    
+segDisp segDisp_sO (
+    .in(secO)
+);
+segDisp segDisp_sT (
+    .in(secT)
+);
+
+segDisp segDisp_mO (
+    .in(minO)
+);
+segDisp segDisp_mT (
+    .in(minT)
+);
 
 endmodule
+
+
