@@ -65,12 +65,7 @@ module timer (
     input RESET,
     input clk,
 
-    output [3:0] secO,
-    output [3:0] secT,
-    output [3:0] minO,
-    output [3:0] minT,
-    output [6:0] out
-
+    output wire [6:0] out
 );
 
     // Format:   7-seg display =>    | minT | minO | secT | secO |
@@ -229,19 +224,23 @@ module timer (
                     end             
             end
     end
-    
-segDisp segDisp_sO (
-    .in(secO)
-);
-segDisp segDisp_sT (
-    .in(secT)
-);
+		// TODO: need to handle scanning through these somehow
+			segDisp segDisp_sO (
+			.in(secO),
+			.out(out)
+			);
+			segDisp segDisp_sT (
+			.in(secT),
+			.out(out)
+			);
 
-segDisp segDisp_mO (
-    .in(minO)
-);
-segDisp segDisp_mT (
-    .in(minT)
-);
-
+			segDisp segDisp_mO (
+			.in(minO),
+			.out(out)
+			);
+			segDisp segDisp_mT (
+			.in(minT),
+			.out(out)
+			);
+			
 endmodule

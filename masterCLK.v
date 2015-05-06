@@ -23,15 +23,11 @@
 module masterCLK(
     input clk, 
     input rst,
-    input ADJ,
-    input SEL,
-    input RESET,
     
     output reg clock2Hz, 
     output reg clock1Hz,
-    output reg clockFast, // 500 Hz
-    output reg clockBlink, //   3 Hz
-    output wire [6:0] out
+    output reg clockFast,  // 500 Hz
+    output reg clockBlink  //   3 Hz
     );
 
     reg [26:0] counter;
@@ -96,19 +92,5 @@ module masterCLK(
 
             end     // end else block
     end             // end always block 
-  
-	 masterToTimer mtt (
-			.ADJ (ADJ),
-			.SEL (SEL),
-			.RESET (RESET),
-             
-			.clk (clk),
-			.clock2Hz (clock2Hz),
-			.clock1Hz (clock1Hz)
-			//input clockFast,
-			//input clockBlink,
-
-			
-			);
   
 endmodule
