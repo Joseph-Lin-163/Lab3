@@ -23,11 +23,11 @@
 module masterCLK(
     input clk, 
     input rst,
-
+    
     output reg clock2Hz, 
     output reg clock1Hz,
-    output reg clockFast, // 500 Hz
-    output reg clockBlink //   3 Hz
+    output reg clockFast,  // 500 Hz
+    output reg clockBlink  //   3 Hz
     );
 
     reg [26:0] counter;
@@ -92,5 +92,5 @@ module masterCLK(
 
             end     // end else block
     end             // end always block 
-    
+  
 endmodule

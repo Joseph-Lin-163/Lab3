@@ -24,9 +24,11 @@ module segDisp (
 	output reg [6:0] out
 );
 
+    
+
 // A = top, B = top-right, ... , F = top left, G = middle
-always @*
-	begin 
+always @(*) begin 
+	out = 7'b0000000;
 	case(in)
 		4'b0000: out <= 7'b1111110;
 		4'b0001: out <= 7'b0110000;
