@@ -40,20 +40,20 @@ module masterCLK(
         if (rst)
             begin
 				
-                clock2Hz = 0; 
-                clock1Hz = 0;
-                clockFast = 0;
-                clockBlink = 0;
+                clock2Hz <= 0; 
+                clock1Hz <= 0;
+                clockFast <= 0;
+                clockBlink <= 0;
 					 
-					 counter = 0;
-					 fastCounter = 0;
+					 counter <= 0;
+					 fastCounter <= 0;
             end
         else
             begin
                 if (counter == 'd100000000)
                 begin
                     clock1Hz <= ~clock1Hz;
-                    counter = 'd0;
+                    counter <= 'd0;
                 end
                 if (counter == 'd50000000 || counter == 'd100000000)                 
                 begin
@@ -72,8 +72,8 @@ module masterCLK(
                     clockBlink <= ~clockBlink;
                 end
 
-                counter = counter + 'd1;
-					 fastCounter = fastCounter + 'd1;
+                counter <= counter + 'd1;
+				    fastCounter <= fastCounter + 'd1;
 
                 
                 /*

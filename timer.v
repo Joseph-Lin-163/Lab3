@@ -64,8 +64,10 @@ module timer (
     input ADJ,
     input RESET,
     input clk,
-
-    output wire [6:0] out
+    
+    input clockFast,
+    output reg [3:0] an,
+    output reg [6:0] out
 );
 
     // Format:   7-seg display =>    | minT | minO | secT | secO |
@@ -117,15 +119,22 @@ module timer (
                 reg [3:0] secT = 4'b0000;
                 reg [3:0] minO = 4'b0000;
                 reg [3:0] minT = 4'b0000;
+                reg [1:0] cnt  = 2'b00;
+                wire [6:0] out0 = 7'b0000000;
+                wire [6:0] out1 = 7'b0000000;   
+                wire [6:0] out2 = 7'b0000000;   
+                wire [6:0] out3 = 7'b0000000;
+
+                
     always @(posedge clk)
     begin
 
       	if (RESET) 
             begin
-                secO = 4'b0000;
-                secT = 4'b0000;
-                minO = 4'b0000;
-                minT = 4'b0000;
+                secO <= 4'b0000;
+                secT <= 4'b0000;
+                minO <= 4'b0000;
+                minT <= 4'b0000;
 
             end
         else if (ADJ == 0) 
@@ -154,7 +163,7 @@ module timer (
 
                                 if (minT == 4'b0101)
                                     begin
-                                    minT = 4'b0000;
+                                    minT <= 4'b0000;
                                     end
                                 else
                                     begin
@@ -210,7 +219,7 @@ module timer (
 
                     if (minT == 4'b0101)
                     	begin
-                        minT = 0;
+                        minT <= 0;
                         end
                     else
                         begin
@@ -224,23 +233,103 @@ module timer (
                     end             
             end
     end
-		// TODO: need to handle scanning through these somehow
-			segDisp segDisp_sO (
+    /*
+    segDisp segDisp_sO (
 			.in(secO),
-			.out(out)
+			.out(out0)
 			);
-			segDisp segDisp_sT (
+    segDisp segDisp_sT (
 			.in(secT),
-			.out(out)
+			.out(out1)
 			);
-
-			segDisp segDisp_mO (
+    segDisp segDisp_mO (
 			.in(minO),
-			.out(out)
+			.out(out2)
 			);
-			segDisp segDisp_mT (
+    segDisp segDisp_mT (
 			.in(minT),
-			.out(out)
+			.out(out3)
 			);
+            */
+    always @ (posedge clockFast) begin
+        //cnt <= cnt + 1;
+        
+        case(cnt)
+        'b00: begin
+            an <= 4'b1110;
+            cnt <= 'b01;
+            out <= 7'b0000000;
+            case(secO)
+                    4'b0000: out <= 7'b1111110;
+                    4'b0001: out <= 7'b0110000;
+                    4'b0010: out <= 7'b1101101;
+                    4'b0011: out <= 7'b1111001;
+                    4'b0100: out <= 7'b0110011;
+                    4'b0101: out <= 7'b1011011;
+                    4'b0110: out <= 7'b1011111;
+                    4'b0111: out <= 7'b1110000;
+                    4'b1000: out <= 7'b1111111;
+                    4'b1001: out <= 7'b1110011;
+                    endcase
+
+            end
+        'b01:
+            begin
+            an <= 4'b1101;
+            cnt <= 'b10;
+            out <= 7'b0000000;
+            case(secT)
+                    4'b0000: out <= 7'b1111110;
+                    4'b0001: out <= 7'b0110000;
+                    4'b0010: out <= 7'b1101101;
+                    4'b0011: out <= 7'b1111001;
+                    4'b0100: out <= 7'b0110011;
+                    4'b0101: out <= 7'b1011011;
+                    4'b0110: out <= 7'b1011111;
+                    4'b0111: out <= 7'b1110000;
+                    4'b1000: out <= 7'b1111111;
+                    4'b1001: out <= 7'b1110011;
+                    endcase
+            end
+        'b10:
+            begin
 			
+            an <= 4'b1011;
+            cnt <= 'b11;
+            out <= 7'b0000000;
+            case(minO)
+                    4'b0000: out <= 7'b1111110;
+                    4'b0001: out <= 7'b0110000;
+                    4'b0010: out <= 7'b1101101;
+                    4'b0011: out <= 7'b1111001;
+                    4'b0100: out <= 7'b0110011;
+                    4'b0101: out <= 7'b1011011;
+                    4'b0110: out <= 7'b1011111;
+                    4'b0111: out <= 7'b1110000;
+                    4'b1000: out <= 7'b1111111;
+                    4'b1001: out <= 7'b1110011;
+                    endcase
+            end
+        'b11:
+            begin
+			
+            an <= 4'b0111;
+            cnt <= 'b00;
+            out <= 7'b0000000;
+            case(minT)
+                    4'b0000: out <= 7'b1111110;
+                    4'b0001: out <= 7'b0110000;
+                    4'b0010: out <= 7'b1101101;
+                    4'b0011: out <= 7'b1111001;
+                    4'b0100: out <= 7'b0110011;
+                    4'b0101: out <= 7'b1011011;
+                    4'b0110: out <= 7'b1011111;
+                    4'b0111: out <= 7'b1110000;
+                    4'b1000: out <= 7'b1111111;
+                    4'b1001: out <= 7'b1110011;
+                    endcase
+            end
+        endcase
+    end
+    
 endmodule

@@ -26,7 +26,7 @@ module masterToTimer (
     
 	input clk,
 	input clock2Hz,
-   input clock1Hz,
+    input clock1Hz,
 	//input clockFast,
 	//input clockBlink,
 
@@ -47,9 +47,9 @@ module masterToTimer (
 	begin
 		if (RESET)
 			begin
-				clock2HzPrev = 1'b0;
-    			clock1HzPrev = 1'b0;
-            clkOut = 1'b0;
+				clock2HzPrev <= 1'b0;
+    			clock1HzPrev <= 1'b0;
+            clkOut <= 1'b0;
 			end
 		else
 			begin
@@ -57,7 +57,7 @@ module masterToTimer (
 					begin
 						if (clock1Hz != clock1HzPrev)
 							begin
-								clock1HzPrev = clock1Hz;
+								clock1HzPrev <= clock1Hz;
 								clkOut <= 1'b1;
 							end
 						else
@@ -69,7 +69,7 @@ module masterToTimer (
 					begin
 						if (clock2Hz != clock2HzPrev)
 							begin
-								clock2HzPrev = clock2Hz;
+								clock2HzPrev <= clock2Hz;
 								clkOut <= 1'b1;
 							end
 						else

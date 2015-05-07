@@ -30,7 +30,9 @@ module tb(
 	 
 	 reg ADJ, SEL, RESET;
 	 wire clkOut;
+     
 	 wire [6:0] out;
+    wire [3:0] an;
 	 
     
     masterCLK myCLK (
@@ -67,7 +69,10 @@ module tb(
 		.ADJ(ADJ),
 		.RESET(RESET),
 		.clk(clkOut),
+        .clockFast(clockFast),
+        
 		//output
+        .an (an),
 		.out (out)	
 		);
 			
