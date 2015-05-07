@@ -81,7 +81,7 @@ module tb(
         clk = 1'b0;
 		  rst = 1'b1;
 		  RESET = 1'b1;
-        repeat(4) #1 clk = ~clk;
+        repeat(4) #10 clk = ~clk;
 		  rst = 1'b0;
         forever #1 clk = ~clk;
     end

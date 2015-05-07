@@ -24,8 +24,8 @@ module masterToTimer (
 	input SEL,
 	input RESET,
     
-	input clk,
-	input clock2Hz,
+	 input clk,
+	 input clock2Hz,
     input clock1Hz,
 	//input clockFast,
 	//input clockBlink,

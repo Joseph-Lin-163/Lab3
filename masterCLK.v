@@ -40,40 +40,42 @@ module masterCLK(
         if (rst)
             begin
 				
-                clock2Hz <= 0; 
-                clock1Hz <= 0;
-                clockFast <= 0;
-                clockBlink <= 0;
+                clock2Hz = 0; 
+                clock1Hz = 0;
+                clockFast = 0;
+                clockBlink = 0;
 					 
-					 counter <= 0;
-					 fastCounter <= 0;
+					 counter = 'd0;
+					 fastCounter = 'd0;
             end
         else
             begin
-                if (counter == 'd100000000)
+					 // note: = is used instead of <= because counter <= 'd0 does not set to 0
+                if (counter == 'd10000/*0000*/)
                 begin
-                    clock1Hz <= ~clock1Hz;
-                    counter <= 'd0;
+                    clock1Hz = ~clock1Hz;
+                    counter = 'd0;
                 end
+					 
                 if (counter == 'd50000000 || counter == 'd100000000)                 
                 begin
-                    clock2Hz <= ~clock2Hz;
+                    clock2Hz = ~clock2Hz;
                 end
 
                 if (fastCounter == 'd200000)
                 begin
-                    clockFast <= ~clockFast;
-						  fastCounter <= 'd0;
+                    clockFast = ~clockFast;
+						  fastCounter = 'd0;
                 end
 
                 // If we say 1 second per 100 MHz, this is .33 seconds for 3 ticks a sec
                 if ((counter == 'd33333333) || (counter == 'd66666666) || (counter == 'd99999999)) 
                 begin
-                    clockBlink <= ~clockBlink;
+                    clockBlink = ~clockBlink;
                 end
 
-                counter <= counter + 'd1;
-				    fastCounter <= fastCounter + 'd1;
+                counter = counter + 'd1;
+				    fastCounter = fastCounter + 'd1;
 
                 
                 /*
@@ -92,5 +94,12 @@ module masterCLK(
 
             end     // end else block
     end             // end always block 
+	 /*always @ (posedge clk)
+	 begin
+			if (counter == 'd100000000)
+				counter = 'd0;
+			if (fastCounter == 'd200000)
+			   fastCounter = 'd0;
+	 end*/
   
 endmodule
