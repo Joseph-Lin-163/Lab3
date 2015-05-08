@@ -20,27 +20,15 @@
 //////////////////////////////////////////////////////////////////////////////////
 
 module masterToTimer (
-	input ADJ,
-	input SEL,
+	 input ADJ,
+	 input SEL,
     
 	 input clk,
 	 input clock2Hz,
     input clock1Hz,
-	//input clockFast,
-	//input clockBlink,
-
 	output reg clkOut
 );
 
-    reg clock2HzPrev;
-    reg clock1HzPrev;
-	//reg clockFastPrev = 1'b0;
-	//reg clockBlinkPrev = 1'b0;
-
-	/*
-		Question:
-		Where do we take care of the blinking and scanning?
-	*/
 	
 	always @ (posedge clk)
 	begin

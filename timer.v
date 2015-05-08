@@ -59,13 +59,15 @@
 */
 
 module timer (
-	
+    input masterCLK,
     input SEL,
     input ADJ,
     input rst,
     input clk,
     input PAUSE,
     input clockFast,
+	 input clockBlink,
+	 
     output reg [3:0] an,
     output reg [6:0] out
 );
@@ -114,25 +116,30 @@ module timer (
             Reset after 59
         Collorary: Max time is 59:59
     */
-	 reg [3:0] secO;
-    reg [3:0] secT;
-    reg [3:0] minO;
-    reg [3:0] minT;
-    reg [1:0] cnt;
-     always @(*)
-	  begin
-	      if (rst)
-			begin
-                secO = 0;
-                secT = 0;
-                minO = 0;
-                minT = 0;
-                cnt  = 0;
-		   end
-     end         
-    always @(posedge clk)
+	 
+	   reg [3:0] secO = 4'b0000;
+		reg [3:0] secT = 4'b0000;
+		reg [3:0] minO = 4'b0000;
+		reg [3:0] minT = 4'b0000;
+		reg [1:0] cnt = 2'b00;
+		reg clkPrev = 0;
+		reg clockFastPrev = 0;
+		
+    always @(posedge masterCLK)
     begin
-		 if (PAUSE == 0) begin
+	    if (rst)
+		 begin
+		      secO [3:0] <= 4'b0000;
+		      secT [3:0] <= 4'b0000;
+		      minO [3:0] <= 4'b0000;
+		      minT [3:0] <= 4'b0000;
+		      //cnt [1:0] <= 2'b00;
+				clkPrev <= 0;
+		 end
+		 else if (clk != clkPrev)
+		 begin
+		   clkPrev <= clk;
+		   if (PAUSE == 0) begin
 				 if (ADJ == 0) 
 
             /*
@@ -156,7 +163,6 @@ module timer (
                                 begin
                                 minO <= 4'b0000;
 
-
                                 if (minT == 4'b0101)
                                     begin
                                     minT <= 4'b0000;
@@ -165,15 +171,12 @@ module timer (
                                     begin
                                     minT <= minT + 1;
                                     end
-                                
-
-
+                      
                                 end   
                             else
                                 begin
                                 minO <= minO + 1;
                                 end                            
-
                         end
                     else
                         begin
@@ -229,17 +232,31 @@ module timer (
                     end             
             end
 		 end 
-		 
+	   end // clk
     end // always block
 
-    always @ (posedge clockFast) begin
-        //cnt <= cnt + 1;
-        
+    always @ (posedge masterCLK) 
+	 begin
+	 if (rst)
+	 begin
+		cnt [1:0] <= 2'b00;
+	   clockFastPrev <= 0;	
+    end
+    else if (clockFast != clockFastPrev)   
+    begin
+        clockFastPrev <= clockFast;	 
         case(cnt)
         'b00: begin
-            an <= 4'b1110;
+		      if (ADJ == 1 && clockBlink == 1)
+				begin
+				    an <= 4'b1111;
+			   end
+			   else
+				begin
+					 an <= 4'b1110;
+				end
             cnt <= 'b01;
-            //out <= 7'b0000000;
+ 
             case(secO)
                     4'b0000: out <= 7'b1111110;
                     4'b0001: out <= 7'b0110000;
@@ -256,9 +273,16 @@ module timer (
             end
         'b01:
             begin
-            an <= 4'b1101;
+		      if (ADJ == 1 && clockBlink == 1)
+				begin
+				    an <= 4'b1111;
+			   end
+			   else
+				begin
+					 an <= 4'b1101;
+			   end
             cnt <= 'b10;
-            //out <= 7'b0000000;
+
             case(secT)
                     4'b0000: out <= 7'b1111110;
                     4'b0001: out <= 7'b0110000;
@@ -274,10 +298,16 @@ module timer (
             end
         'b10:
             begin
-			
-            an <= 4'b1011;
-            cnt <= 'b11;
-            //out <= 7'b0000000;
+		      if (ADJ == 1 && clockBlink == 1)
+				begin
+				    an <= 4'b1111;
+			   end
+			   else
+				begin
+					 an <= 4'b1011;
+            end
+				cnt <= 'b11;
+
             case(minO)
                     4'b0000: out <= 7'b1111110;
                     4'b0001: out <= 7'b0110000;
@@ -293,10 +323,16 @@ module timer (
             end
         'b11:
             begin
-			
-            an <= 4'b0111;
-            cnt <= 'b00;
-            //out <= 7'b0000000;
+		      if (ADJ == 1 && clockBlink == 1)
+				begin
+				    an <= 4'b1111;
+			   end
+			   else
+				begin
+					 an <= 4'b0111;
+            end
+				cnt <= 'b00;
+
             case(minT)
                     4'b0000: out <= 7'b1111110;
                     4'b0001: out <= 7'b0110000;
@@ -311,6 +347,7 @@ module timer (
                     endcase
             end
         endcase
+		end
     end
      
 endmodule

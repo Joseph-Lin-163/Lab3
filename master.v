@@ -3,9 +3,9 @@
 // Company: 
 // Engineer: 
 // 
-// Create Date:    10:56:18 04/29/2015 
+// Create Date:    11:03:38 05/06/2015 
 // Design Name: 
-// Module Name:    tb 
+// Module Name:    master 
 // Project Name: 
 // Target Devices: 
 // Tool versions: 
@@ -18,27 +18,63 @@
 // Additional Comments: 
 //
 //////////////////////////////////////////////////////////////////////////////////
-module tb(
+module master(
+    input clk,
+    input ADJ,
+    input SEL,
+    input rst,
+	 input PAUSE,
+    output [6:0] out,
+    output [3:0] an
     );
-	// remember reg for input and wire for output
-    reg clk, rst;
-	 
+    
     wire clock1Hz;
     wire clock2Hz;
     wire clockFast;
     wire clockBlink;
+    wire clkOut;
 	 
-	 reg ADJ, SEL, PAUSE;
-	 wire clkOut;
-     
-	 wire [6:0] out;
-    wire [3:0] an;
 	 
-    
+	 reg [9:0] rstSample = 10'b0000000000;
+	 reg [9:0] PAUSESample = 10'b0000000000;
+	 reg [26:0] fastCounter = 'd0;
+	 reg rstOut = 0;
+	 reg PAUSEOut = 0;
+	 always @(*)
+	 begin
+			if (fastCounter == 'd2000/*00*/)
+                begin
+					 fastCounter = 'd0;
+					     if (rst == 1)
+						  begin
+								rstSample = rstSample + 1;
+								rstSample = rstSample << 1;
+						  end
+						  else
+								rstSample = 0;
+								
+						  if (PAUSE == 1)
+						  begin
+								PAUSESample = PAUSESample + 1;
+								PAUSESample = PAUSESample << 1;
+						  end
+						  else
+								PAUSESample = 0;
+					 end
+			else
+				fastCounter = fastCounter + 'd1;
+			if (rstSample == 10'b1111111111)
+				rstOut = 1;
+			else
+				rstOut = 0;
+			if (PAUSESample == 10'b1111111111)
+				PAUSEOut = ~PAUSEOut;
+	 end
+	 
     masterCLK myCLK (
 	     // inputs
         .clk (clk),
-		  .rst (rst),
+		  .rst (rstOut),
 		  
 		  //outputs
         .clock1Hz (clock1Hz),
@@ -51,65 +87,28 @@ module tb(
 			// inputs
 			.ADJ (ADJ),
 			.SEL (SEL),
-         
+			
 			.clk (clk),
 			.clock2Hz (clock2Hz),
 			.clock1Hz (clock1Hz),
-
+			
 			//output
 			.clkOut (clkOut)
 			);
-			 
+			
 	 timer timer_t (
 		// input
 		.masterCLK(clk),
 		.SEL(SEL),
 		.ADJ(ADJ),
-		.rst(rst),
+		.rst(rstOut),
 		.clk(clkOut),
-		.PAUSE(PAUSE),
+		.PAUSE(PAUSEOut),
       .clockFast(clockFast),
 		.clockBlink(clockBlink),
-        
 		//output
       .an (an),
 		.out (out)	
 		);
-			
-			
-    initial begin
-        clk = 1'b0;
-		  rst = 1'b1;
-        repeat(4) #10 clk = ~clk;
-		  rst = 1'b0;
-        forever #1 clk = ~clk;
-    end
-    
-    initial begin
-			ADJ = 0;
-			PAUSE = 0;
-			SEL = 0;
-		  
-        #5000000
-		  rst = 1'b1;
-		  #5000000
-		  rst = 1'b0;
-		  #50000000
-		  rst = 1'b1;
-		  #5000000
-		  rst = 1'b0;
-		  #50000000
-		  PAUSE = 1'b1;
-		  #5000000
-		  PAUSE = 1'b0;
-		  ADJ = 1'b1;
-		  #500000000
-		  SEL = 1;
-		  #500000000
-		  ADJ = 0;
-		  #500000000
-		   ADJ = 0;
-        #100000000
-    $finish;
-    end
+
 endmodule

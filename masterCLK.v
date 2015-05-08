@@ -26,12 +26,15 @@ module masterCLK(
     
     output reg clock2Hz, 
     output reg clock1Hz,
-    output reg clockFast,  // 500 Hz
+    output reg clockFast,   // 500 Hz
     output reg clockBlink  //   3 Hz
+	 
     );
 
     reg [26:0] counter;
 	 reg [26:0] fastCounter;
+	 
+	 
     // 100 Mhz = 100 000 000, 27 bits needed
     // 100 000 000 Hz
     
@@ -46,10 +49,11 @@ module masterCLK(
 					 
 					 counter <= 'd0;
 					 fastCounter <= 'd0;
+					 
+			
             end
         else
             begin
-					 // note: = is used instead of <= because counter <= 'd0 does not set to 0
                 if (counter == 'd1000000/*00*/)
                 begin
                     clock1Hz <= ~clock1Hz;
@@ -77,32 +81,8 @@ module masterCLK(
                     clockBlink <= ~clockBlink;
                 end
 
-
-				    
-
-                
-                /*
-                    Need: Joshua's input
-
-                    I see potential problem:
-
-                    1. variable <= ~variable only flips the bit once
-                        Shouldn't we be flipping it on, then off to signify
-                            "This is on at the 100 Mhz mark only"
-                        It seems to be that clock1Hz is on for 100 MHz, off for 100MHz, etc.
-                        Should we have it be 1 tick (on then off) every 100 MHz?
-                        Maybe flip the bit off on the next posedge?
-                */
-
-
             end     // end else block
     end             // end always block 
-	 /*always @ (posedge clk)
-	 begin
-			if (counter == 'd100000000)
-				counter = 'd0;
-			if (fastCounter == 'd200000)
-			   fastCounter = 'd0;
-	 end*/
+
   
 endmodule
