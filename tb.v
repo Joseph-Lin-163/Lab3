@@ -28,7 +28,7 @@ module tb(
     wire clockFast;
     wire clockBlink;
 	 
-	 reg ADJ, SEL, RESET;
+	 reg ADJ, SEL, PAUSE;
 	 wire clkOut;
      
 	 wire [6:0] out;
@@ -38,7 +38,7 @@ module tb(
     masterCLK myCLK (
 	     // inputs
         .clk (clk),
-		  .rst (rst),
+		  .rst (rst), 
 		  
 		  //outputs
         .clock1Hz (clock1Hz),
@@ -51,7 +51,6 @@ module tb(
 			// inputs
 			.ADJ (ADJ),
 			.SEL (SEL),
-			.RESET (RESET),
          
 			.clk (clk),
 			.clock2Hz (clock2Hz),
@@ -67,9 +66,10 @@ module tb(
 		// input
 		.SEL(SEL),
 		.ADJ(ADJ),
-		.RESET(RESET),
+		.rst(rst),
 		.clk(clkOut),
-        .clockFast(clockFast),
+		.PAUSE (PAUSE),
+      .clockFast(clockFast),
         
 		//output
         .an (an),
@@ -80,7 +80,6 @@ module tb(
     initial begin
         clk = 1'b0;
 		  rst = 1'b1;
-		  RESET = 1'b1;
         repeat(4) #10 clk = ~clk;
 		  rst = 1'b0;
         forever #1 clk = ~clk;
@@ -88,11 +87,22 @@ module tb(
     
     initial begin
 			ADJ = 0;
-			SEL = 1;
-		  #1000
-		  RESET = 1'b0;
+			PAUSE = 0;
+			SEL = 0;
+		  
         #5000000
-		   ADJ = 0;
+		  rst = 1'b1;
+		  #5000000
+		  rst = 1'b0;
+		  #50000000
+		  PAUSE = 1'b1;
+		  #5000000
+		  PAUSE = 1'b0;
+		  ADJ = 1'b1;
+		  #500000000
+		  SEL = 1;
+		  #500000000
+		  ADJ = 0;
 		  #500000000
 		   ADJ = 0;
         #100000000

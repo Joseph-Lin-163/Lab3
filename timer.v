@@ -62,9 +62,9 @@ module timer (
 	
     input SEL,
     input ADJ,
-    input RESET,
+    input rst,
     input clk,
-    
+    input PAUSE,
     input clockFast,
     output reg [3:0] an,
     output reg [6:0] out
@@ -114,30 +114,26 @@ module timer (
             Reset after 59
         Collorary: Max time is 59:59
     */
-
-                reg [3:0] secO = 4'b0000;
-                reg [3:0] secT = 4'b0000;
-                reg [3:0] minO = 4'b0000;
-                reg [3:0] minT = 4'b0000;
-                reg [1:0] cnt  = 2'b00;
-                wire [6:0] out0 = 7'b0000000;
-                wire [6:0] out1 = 7'b0000000;   
-                wire [6:0] out2 = 7'b0000000;   
-                wire [6:0] out3 = 7'b0000000;
-
-                
+	 reg [3:0] secO;
+    reg [3:0] secT;
+    reg [3:0] minO;
+    reg [3:0] minT;
+    reg [1:0] cnt;
+     always @(*)
+	  begin
+	      if (rst)
+			begin
+                secO = 0;
+                secT = 0;
+                minO = 0;
+                minT = 0;
+                cnt  = 0;
+		   end
+     end         
     always @(posedge clk)
     begin
-
-      	if (RESET) 
-            begin
-                secO <= 4'b0000;
-                secT <= 4'b0000;
-                minO <= 4'b0000;
-                minT <= 4'b0000;
-
-            end
-        else if (ADJ == 0) 
+		 if (PAUSE == 0) begin
+				 if (ADJ == 0) 
 
             /*
                 NOTICE: See the ADJ equal 0.png file for clarity on the code
@@ -232,25 +228,10 @@ module timer (
                     minO <= minO + 1;
                     end             
             end
-    end
-    /*
-    segDisp segDisp_sO (
-			.in(secO),
-			.out(out0)
-			);
-    segDisp segDisp_sT (
-			.in(secT),
-			.out(out1)
-			);
-    segDisp segDisp_mO (
-			.in(minO),
-			.out(out2)
-			);
-    segDisp segDisp_mT (
-			.in(minT),
-			.out(out3)
-			);
-            */
+		 end 
+		 
+    end // always block
+
     always @ (posedge clockFast) begin
         //cnt <= cnt + 1;
         
@@ -258,7 +239,7 @@ module timer (
         'b00: begin
             an <= 4'b1110;
             cnt <= 'b01;
-            out <= 7'b0000000;
+            //out <= 7'b0000000;
             case(secO)
                     4'b0000: out <= 7'b1111110;
                     4'b0001: out <= 7'b0110000;
@@ -277,7 +258,7 @@ module timer (
             begin
             an <= 4'b1101;
             cnt <= 'b10;
-            out <= 7'b0000000;
+            //out <= 7'b0000000;
             case(secT)
                     4'b0000: out <= 7'b1111110;
                     4'b0001: out <= 7'b0110000;
@@ -296,7 +277,7 @@ module timer (
 			
             an <= 4'b1011;
             cnt <= 'b11;
-            out <= 7'b0000000;
+            //out <= 7'b0000000;
             case(minO)
                     4'b0000: out <= 7'b1111110;
                     4'b0001: out <= 7'b0110000;
@@ -315,7 +296,7 @@ module timer (
 			
             an <= 4'b0111;
             cnt <= 'b00;
-            out <= 7'b0000000;
+            //out <= 7'b0000000;
             case(minT)
                     4'b0000: out <= 7'b1111110;
                     4'b0001: out <= 7'b0110000;
@@ -331,5 +312,5 @@ module timer (
             end
         endcase
     end
-    
+     
 endmodule

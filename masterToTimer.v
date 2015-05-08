@@ -22,7 +22,6 @@
 module masterToTimer (
 	input ADJ,
 	input SEL,
-	input RESET,
     
 	 input clk,
 	 input clock2Hz,
@@ -42,42 +41,13 @@ module masterToTimer (
 		Question:
 		Where do we take care of the blinking and scanning?
 	*/
-    
+	
 	always @ (posedge clk)
 	begin
-		if (RESET)
-			begin
-				clock2HzPrev <= 1'b0;
-    			clock1HzPrev <= 1'b0;
-            clkOut <= 1'b0;
-			end
+		if (ADJ == 0)
+			clkOut <= clock1Hz;
 		else
-			begin
-				if (ADJ == 0)
-					begin
-						if (clock1Hz != clock1HzPrev)
-							begin
-								clock1HzPrev <= clock1Hz;
-								clkOut <= 1'b1;
-							end
-						else
-							begin
-								clkOut <= 1'b0;
-							end
-					end
-				else
-					begin
-						if (clock2Hz != clock2HzPrev)
-							begin
-								clock2HzPrev <= clock2Hz;
-								clkOut <= 1'b1;
-							end
-						else
-							begin
-								clkOut <= 1'b0;
-							end
-					end
-			end
+			clkOut <= clock2Hz;
 	end
 
 endmodule
