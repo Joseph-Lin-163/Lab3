@@ -23,7 +23,7 @@ module master(
     input ADJ,
     input SEL,
     input rst,
-	 input PAUSE,
+	input PAUSE,
     output [6:0] out,
     output [3:0] an
     );
@@ -40,9 +40,10 @@ module master(
 	 reg [26:0] fastCounter = 'd0;
 	 reg rstOut = 0;
 	 reg PAUSEOut = 0;
-	 always @(*)
+     
+	 /*always @(*)
 	 begin
-			if (fastCounter == 'd2000/*00*/)
+			if (fastCounter == 'd200000)
                 begin
 					 fastCounter = 'd0;
 					     if (rst == 1)
@@ -69,12 +70,73 @@ module master(
 				rstOut = 0;
 			if (PAUSESample == 10'b1111111111)
 				PAUSEOut = ~PAUSEOut;
-	 end
+	 end*/
+     
+   wire [17:0] clk_dv_inc;
+
+   reg [16:0]  clk_dv;
+   reg         clk_en;
+   reg         clk_en_d;
+      
+   reg [7:0]   inst_wd;
+   reg         inst_vld;
+   reg [2:0]   step_d;
+
+   // ===========================================================================
+   // 763Hz timing signal for clock enable
+   // ===========================================================================
+
+   assign clk_dv_inc = clk_dv + 1;
+   
+   always @ (posedge clk)
+     if (rst)
+       begin
+          clk_dv   <= 0;
+          clk_en   <= 1'b0;
+          clk_en_d <= 1'b0;
+       end
+     else
+       begin
+          clk_dv   <= clk_dv_inc[16:0];
+          clk_en   <= clk_dv_inc[17];
+          clk_en_d <= clk_en;
+       end
+   
+   // ===========================================================================
+   // Instruction Stepping Control
+   // ===========================================================================
+
+   always @ (posedge clk)
+     if (rst)
+       begin
+          //inst_wd[7:0] <= 0;
+          step_d[2:0]  <= 0;
+       end
+     else if (clk_en)
+       begin
+          //inst_wd[7:0] <= sw[7:0]; // give the next instruction
+          step_d[2:0]  <= {PAUSE, step_d[2:1]};
+       end
+
+   always @ (posedge clk)
+     if (rst)
+       inst_vld <= 1'b0;
+     else
+       inst_vld <= ~step_d[0] & step_d[1] & clk_en_d;
+       
+   always @ (posedge clk)
+    begin
+        if (inst_vld)
+        begin
+            PAUSEOut = ~PAUSEOut;
+        end
+    end   
+       
 	 
     masterCLK myCLK (
 	     // inputs
         .clk (clk),
-		  .rst (rstOut),
+		  .rst (rst),
 		  
 		  //outputs
         .clock1Hz (clock1Hz),
@@ -101,7 +163,7 @@ module master(
 		.masterCLK(clk),
 		.SEL(SEL),
 		.ADJ(ADJ),
-		.rst(rstOut),
+		.rst(rst),
 		.clk(clkOut),
 		.PAUSE(PAUSEOut),
       .clockFast(clockFast),

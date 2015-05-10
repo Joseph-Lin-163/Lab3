@@ -54,7 +54,7 @@ module masterCLK(
             end
         else
             begin
-                if (counter == 'd1000000/*00*/)
+                if (counter == 'd100000000)
                 begin
                     clock1Hz <= ~clock1Hz;
                     counter <= 'd0;
@@ -62,12 +62,12 @@ module masterCLK(
 					 else
 					     counter <= counter + 'd1;
 					 
-                if (counter == 'd500000/*00*/ || counter == 'd1000000/*00*/)                 
+                if (counter == 'd50000000 || counter == 'd100000000)                 
                 begin
                     clock2Hz <= ~clock2Hz;
                 end
 
-                if (fastCounter == 'd2000/*00*/)
+                if (fastCounter == 'd200000)
                 begin
                     clockFast <= ~clockFast;
 						  fastCounter <= 'd0;
@@ -76,7 +76,7 @@ module masterCLK(
 					     fastCounter <= fastCounter + 'd1;
 
                 // If we say 1 second per 100 MHz, this is .33 seconds for 3 ticks a sec
-                if ((counter == 'd333333/*33*/) || (counter == 'd666666/*66*/) || (counter == 'd999999/*99*/)) 
+                if ((counter == 'd33333333) || (counter == 'd66666666) || (counter == 'd99999999)) 
                 begin
                     clockBlink <= ~clockBlink;
                 end
